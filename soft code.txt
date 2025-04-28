@@ -1,0 +1,61 @@
+import time
+import random
+
+class Module:
+    def __init__(self, name, dimensions):
+        self.name = name
+        self.length, self.width, self.height = dimensions
+        self.material_used = 0
+
+    def estimate_material(self):
+        volume = self.length * self.width * self.height
+        self.material_used = volume * 0.05  # 5% of volume is material
+        return self.material_used
+
+    def __str__(self):
+        return f"Module: {self.name}, Size: {self.length}x{self.width}x{self.height}m, Material: {self.material_used:.2f}kg"
+
+class Printer3D:
+    def __init__(self, precision_level):
+        self.precision = precision_level  # Higher is more accurate
+        self.speed = 1.0 / precision_level  # Inverse relation to accuracy
+
+    def print_module(self, module: Module):
+        material = module.estimate_material()
+        print(f"[START] Printing {module.name} with precision {self.precision} and material {material:.2f}kg")
+
+        time_to_print = (module.length * module.width * module.height) * self.speed
+        for i in range(1, 11):
+            time.sleep(time_to_print / 10)
+            print(f"  -> Printing... {i*10}%")
+        print(f"[DONE] {module.name} completed in {time_to_print:.2f}s\n")
+
+class ConstructionSystem:
+    def __init__(self):
+        self.modules = []
+        self.printer = Printer3D(precision_level=5)
+        self.total_material = 0
+
+    def add_module(self, name, dimensions):
+        module = Module(name, dimensions)
+        self.modules.append(module)
+
+    def start_construction(self):
+        print("Starting Modular Home Construction...\n")
+        for module in self.modules:
+            self.printer.print_module(module)
+            self.total_material += module.material_used
+        print(f"[SUMMARY] Total material used: {self.total_material:.2f}kg")
+        print("[INFO] Construction completed with minimal human intervention!")
+
+# Example usage
+if __name__ == "__main__":
+    system = ConstructionSystem()
+
+    # Add modules: name and dimensions (length, width, height in meters)
+    system.add_module("Living Room", (5, 4, 3))
+    system.add_module("Bedroom", (4, 3, 3))
+    system.add_module("Bathroom", (2, 2, 3))
+    system.add_module("Kitchen", (3, 3, 3))
+
+    system.start_construction()
